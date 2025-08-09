@@ -26,3 +26,20 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Сервер запущено на порті ${PORT}`);
 });
+
+
+// Дозволяємо CORS для фронтенду
+app.use(cors({
+  origin: 'http://localhost:3000', // адреса твого фронтенду
+  credentials: true
+}));
+
+app.use(express.json());
+
+// Маршрути
+const userRoutes = require('./routes/users');
+app.use('/users', userRoutes);
+
+app.listen(5000, () => {
+  console.log('Сервер запущено на порту 5000');
+});
