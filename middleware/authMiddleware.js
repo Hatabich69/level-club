@@ -1,20 +1,18 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'секретний_ключ';
+require('dotenv').config();
 
-function authMiddleware(req, res, next) {
+module.exports = function (req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).json({ error: 'Авторизація потрібна' });
 
   const token = authHeader.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'Токен не знайдено' });
+  if (!token) return res.status(401).json({ error: 'Авторизація потрібна' });
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // додаємо дані користувача в запит
     next();
   } catch (err) {
-    res.status(401).json({ error: 'Невірний токен' });
+    res.status(401).json({ error: 'Невалідний токен' });
   }
-}
-
-module.exports = authMiddleware;
+};
